@@ -51,3 +51,92 @@
     </script>
   </body>
 </html>
+<ion-icon name="bulb-outline"></ion-icon>
+/* DOES NOT WORK - not specific enough */
+.action-sheet-group {
+  background: #e5e5e5;
+}
+
+/* Works - pass "my-custom-class" in cssClass to increase specificity */
+.my-custom-class .action-sheet-group {
+  background: #e5e5e5;
+}
+.my-custom-class {
+  --background: #e5e5e5;
+}
+interface ActionSheetButton<T = any> {
+  text?: string;
+  role?: 'cancel' | 'destructive' | 'selected' | string;
+  icon?: string;
+  cssClass?: string | string[];
+  handler?: () => boolean | void | Promise<boolean | void>;
+  data?: T;
+}
+  interface ActionSheetOptions {
+  header?: string;
+  subHeader?: string;
+  cssClass?: string | string[];
+  buttons: (ActionSheetButton | string)[];
+  backdropDismiss?: boolean;
+  translucent?: boolean;
+  animated?: boolean;
+  mode?: Mode;
+  keyboardClose?: boolean;
+  id?: string;
+  htmlAttributes?: ActionSheetAttributes;
+
+  enterAnimation?: AnimationBuilder;
+  leaveAnimation?: AnimationBuilder;
+}
+  interface ActionSheetAttributes extends JSXBase.HTMLAttributes<HTMLElement> {}
+  async function presentActionSheet() {
+  const actionSheet = document.createElement('ion-action-sheet');
+
+  actionSheet.header = 'Albums';
+  actionSheet.cssClass = 'my-custom-class';
+  actionSheet.buttons = [{
+    text: 'Delete',
+    role: 'destructive',
+    icon: 'trash',
+    id: 'delete-button',
+    data: {
+      type: 'delete'
+    },
+    handler: () => {
+      console.log('Delete clicked');
+    }
+  }, {
+    text: 'Share',
+    icon: 'share',
+    data: 10,
+    handler: () => {
+      console.log('Share clicked');
+    }
+  }, {
+    text: 'Play (open modal)',
+    icon: 'caret-forward-circle',
+    data: 'Data value',
+    handler: () => {
+      console.log('Play clicked');
+    }
+  }, {
+    text: 'Favorite',
+    icon: 'heart',
+    handler: () => {
+      console.log('Favorite clicked');
+    }
+  }, {
+    text: 'Cancel',
+    icon: 'close',
+    role: 'cancel',
+    handler: () => {
+      console.log('Cancel clicked');
+    }
+  }];
+  document.body.appendChild(actionSheet);
+  await actionSheet.present();
+
+  const { role, data } = await actionSheet.onDidDismiss();
+  console.log('onDidDismiss resolved with role and data', role, data);
+}
+  
